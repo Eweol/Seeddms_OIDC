@@ -99,7 +99,7 @@ class SeedDMS_OIDC_initDMS
 	 * Hook after initializing DMS
 	 */
 	function postInitDMS($array)
-	{ 
+	{
 
 		$extSettings =  $array['settings']->_extensions;
 		$settings = $array['settings'];
@@ -127,7 +127,7 @@ class SeedDMS_OIDC_initDMS
 			$oidcServer->RedirectToOidcLogout();
 			return false;
 		}
-		
+
 		$oidcServer->GetToken($_REQUEST["code"]);
 		$jwt = new SeedDMS_OIDC_JWT($oidcServer->token->id_token);
 
@@ -137,8 +137,15 @@ class SeedDMS_OIDC_initDMS
 		}
 
 		$db = $dms->getDB();
-		if (!class_exists('SeedDMS_Session'))
+		if (!class_exists('SeedDMS_Session')) {
 			require_once("./inc/inc.ClassSession.php");
+		}
+		if (!class_exists('SeedDMS_Controller_Login')) {
+			require_once("./inc/inc.ClassControllerCommon.php");
+			require_once("./controllers/class.Login.php");
+		}
+
+		$login = new SeedDMS_Controller_Login($array);
 
 		$username = $jwt->ClaimsArray[$oidcServer->UsernameClaim];
 		$fullname = $jwt->ClaimsArray[$oidcServer->FullnameClaim];
@@ -214,6 +221,8 @@ class SeedDMS_OIDC_initDMS
 			setcookie("mydms_session", $id, $lifetime, $settings->_httpRoot, null, null, !$settings->_enableLargeFileUpload);
 			$_COOKIE["mydms_session"] = $id;
 		}
+
+		$login->callHook('postLogin', $user);
 	}
 
 	private function sessionIsValid()
@@ -262,11 +271,11 @@ class SeedDMS_OIDC_Server
 	public function GetToken($code)
 	{
 		$data = "grant_type=authorization_code&" .
-		"client_id=" . $this->clientId . "&" .
-		"client_secret=" . $this->clientSecret . "&" .
-		"redirect_uri=" . $this->RedirectUri . "&" .
-		"code=" . $code;
-		$this->token = $this->CurlPostJson($this->configuration->token_endpoint,$data);
+			"client_id=" . $this->clientId . "&" .
+			"client_secret=" . $this->clientSecret . "&" .
+			"redirect_uri=" . $this->RedirectUri . "&" .
+			"code=" . $code;
+		$this->token = $this->CurlPostJson($this->configuration->token_endpoint, $data);
 	}
 
 	public function RedirectToOidcLogin()
@@ -298,13 +307,13 @@ class SeedDMS_OIDC_Server
 		return json_decode($result);
 	}
 
-	private function CurlPostJson($endpoint,$data)
+	private function CurlPostJson($endpoint, $data)
 	{
 		$curl = curl_init();
 
 		curl_setopt($curl, CURLOPT_POST, 1);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-		'Content-Type: application/x-www-form-urlencoded'
+			'Content-Type: application/x-www-form-urlencoded'
 		));
 		curl_setopt($curl, CURLOPT_URL, $endpoint);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $data);

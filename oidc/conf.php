@@ -1,10 +1,10 @@
 <?php
 $EXT_CONF['oidc'] = array(
-	'title' => 'OIDC Extensions',
+	'title' => 'OIDC Extension',
 	'description' => 'This extension enables users to login via OIDC',
 	'disable' => false,
-	'version' => '1.0.0',
-	'releasedate' => '2022-11-13',
+	'version' => '1.1.0',
+	'releasedate' => '2022-11-14',
 	'author' => array('name'=>'Eweol', 'email'=>'eweol@outlook.com', 'company'=>'Unimain'),
 	'config' => array(
 		'oidcEnable' => array(

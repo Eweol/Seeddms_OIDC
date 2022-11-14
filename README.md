@@ -1,6 +1,6 @@
-## SeedDms OIDC  Extension
+## SeedDms OIDC Extension
 
-This is a SeedDms extension that add support for OIDC to SeedDMS.
+This is a SeedDms extension that add support for OIDC to SeedDms.
 
 ## Install
 
