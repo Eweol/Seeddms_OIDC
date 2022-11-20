@@ -3,8 +3,8 @@ $EXT_CONF['oidc'] = array(
 	'title' => 'OIDC Extension',
 	'description' => 'This extension enables users to login via OIDC',
 	'disable' => false,
-	'version' => '1.1.0',
-	'releasedate' => '2022-11-14',
+	'version' => '1.2.0',
+	'releasedate' => '2022-11-20',
 	'author' => array('name'=>'Eweol', 'email'=>'eweol@outlook.com', 'company'=>'Unimain'),
 	'config' => array(
 		'oidcEnable' => array(
@@ -48,6 +48,10 @@ $EXT_CONF['oidc'] = array(
 			'title' => 'Admin Group',
 		    'type' => 'input',
 			'placeholder' => "admin"
+		),
+		'accessGroup' => array(
+			'title' => 'Access Group',
+		    'type' => 'input',
 		),
 	),
 	'constraints' => array(

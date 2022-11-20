@@ -136,6 +136,11 @@ class SeedDMS_OIDC_initDMS
 			return;
 		}
 
+		if ($oidcServer->AccessGroup !== "" && !in_array($oidcServer->AccessGroup,$jwt->ClaimsArray[$oidcServer->GroupClaim])) {
+			error_log('[Critical] User is not part of access group');
+			return;
+		}
+
 		$db = $dms->getDB();
 		if (!class_exists('SeedDMS_Session')) {
 			require_once("./inc/inc.ClassSession.php");
@@ -175,7 +180,7 @@ class SeedDMS_OIDC_initDMS
 		}
 
 		$sesstheme = $user->getTheme();
-		if (strlen($sesstheme) == 0) {
+		if (strlen($sesstheme) == 0 || ($settings->_overrideTheme && $sesstheme !== $settings->_theme)) {
 			$sesstheme = $settings->_theme;
 			$user->setTheme($sesstheme);
 		}
@@ -247,6 +252,7 @@ class SeedDMS_OIDC_Server
 	public $EmailClaim;
 	public $GroupClaim;
 	public $AdminGroup;
+	public $AccessGroup;
 	public $token;
 
 	private $clientId;
@@ -264,6 +270,7 @@ class SeedDMS_OIDC_Server
 		$this->EmailClaim = (!isset($oidcSettings["oidcMail"])) ? "email" : $oidcSettings["oidcMail"];
 		$this->GroupClaim = (!isset($oidcSettings["oidcGroup"])) ? "groups" : $oidcSettings["oidcGroup"];
 		$this->AdminGroup = (!isset($oidcSettings["adminGroup"])) ? "admin" : $oidcSettings["adminGroup"];
+		$this->AccessGroup = (!isset($oidcSettings["accessGroup"])) ? "" : $oidcSettings["accessGroup"];
 
 		$this->configuration =  $this->CurlGetJson($this->Endpoint . ".well-known/openid-configuration");
 	}
